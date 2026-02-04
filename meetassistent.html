@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meetassistent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .voice-button {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            background: white;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-button:active {
+            background: #667eea;
+            color: white;
+            transform: scale(0.98);
+        }
+        
+        .voice-button.recording {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .mic-icon {
+            font-size: 24px;
+        }
+        
+        .button-text {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .result-text {
+            margin-top: 8px;
+            padding: 10px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            min-height: 40px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .result-text.empty {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.2s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+        }
+        
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+        
+        .help-text {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 Meetassistent</h1>
+        <p class="subtitle">Houd de knop ingedrukt en spreek je meting in</p>
+        
+        <div class="input-group">
+            <label>Lengte</label>
+            <button class="voice-button" data-field="lengte">
+                <span class="mic-icon">🎤</span>
+                <span class="button-text">Houd ingedrukt om op te nemen</span>
+                <span class="mic-icon">🎤</span>
+            </button>
+            <div class="result-text empty" id="lengte-result">Nog niet ingesproken</div>
+        </div>
+        
+        <div class="input-group">
+            <label>Breedte</label>
+            <button class="voice-button" data-field="breedte">
+                <span class="mic-icon">🎤</span>
+                <span class="button-text">Houd ingedrukt om op te nemen</span>
+                <span class="mic-icon">🎤</span>
+            </button>
+            <div class="result-text empty" id="breedte-result">Nog niet ingesproken</div>
+        </div>
+        
+        <div class="input-group">
+            <label>Hoogte</label>
+            <button class="voice-button" data-field="hoogte">
+                <span class="mic-icon">🎤</span>
+                <span class="button-text">Houd ingedrukt om op te nemen</span>
+                <span class="mic-icon">🎤</span>
+            </button>
+            <div class="result-text empty" id="hoogte-result">Nog niet ingesproken</div>
+        </div>
+        
+        <div class="input-group">
+            <label>Opmerkingen</label>
+            <button class="voice-button" data-field="opmerkingen">
+                <span class="mic-icon">🎤</span>
+                <span class="button-text">Houd ingedrukt om op te nemen</span>
+                <span class="mic-icon">🎤</span>
+            </button>
+            <div class="result-text empty" id="opmerkingen-result">Nog niet ingesproken</div>
+            <p class="help-text">Bijv: "Scheur in muur" of "Extra isolatie nodig"</p>
+        </div>
+        
+        <button class="submit-btn" id="submit-btn">Verstuur Metingen 📤</button>
+        
+        <div class="status-message" id="status-message"></div>
+    </div>
+
+    <script>
+        // Check if browser supports speech recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            alert('Je browser ondersteunt geen spraakherkenning. Gebruik Chrome of Safari op je telefoon.');
+        }
+        
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'nl-NL';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        
+        const data = {
+            lengte: '',
+            breedte: '',
+            hoogte: '',
+            opmerkingen: ''
+        };
+        
+        let currentField = null;
+        
+        // Setup voice buttons
+        document.querySelectorAll('.voice-button').forEach(button => {
+            const field = button.dataset.field;
+            
+            // Mouse/touch events for holding button
+            button.addEventListener('mousedown', () => startRecording(field, button));
+            button.addEventListener('mouseup', () => stopRecording(button));
+            button.addEventListener('mouseleave', () => stopRecording(button));
+            
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startRecording(field, button);
+            });
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopRecording(button);
+            });
+        });
+        
+        function startRecording(field, button) {
+            currentField = field;
+            button.classList.add('recording');
+            button.querySelector('.button-text').textContent = '🔴 Aan het opnemen...';
+            recognition.start();
+        }
+        
+        function stopRecording(button) {
+            button.classList.remove('recording');
+            button.querySelector('.button-text').textContent = 'Houd ingedrukt om op te nemen';
+            recognition.stop();
+        }
+        
+        // Handle recognition results
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            if (currentField) {
+                data[currentField] = transcript;
+                const resultDiv = document.getElementById(`${currentField}-result`);
+                resultDiv.textContent = transcript;
+                resultDiv.classList.remove('empty');
+            }
+        };
+        
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            if (event.error === 'no-speech') {
+                showStatus('Geen spraak gedetecteerd. Probeer opnieuw.', 'error');
+            }
+        };
+        
+        // Submit button
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            // Check if at least one field is filled
+            if (!data.lengte && !data.breedte && !data.hoogte && !data.opmerkingen) {
+                showStatus('Vul minimaal één veld in!', 'error');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Bezig met versturen...';
+            
+            try {
+                // Create URL with query parameters to avoid CORS issues
+                const params = new URLSearchParams({
+                    ...data,
+                    timestamp: new Date().toISOString(),
+                    datum: new Date().toLocaleDateString('nl-NL'),
+                    tijd: new Date().toLocaleTimeString('nl-NL')
+                });
+                
+                const response = await fetch('https://hooks.zapier.com/hooks/catch/25670597/ul0e9no/?' + params.toString(), {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    showStatus('✅ Metingen succesvol verstuurd!', 'success');
+                    // Reset form after 2 seconds
+                    setTimeout(() => {
+                        resetForm();
+                    }, 2000);
+                } else {
+                    showStatus('❌ Er ging iets mis. Probeer opnieuw.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Verstuur Metingen 📤';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('❌ Geen internetverbinding. Check je verbinding.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Verstuur Metingen 📤';
+            }
+        });
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type}`;
+            
+            if (type === 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 4000);
+            }
+        }
+        
+        function resetForm() {
+            data.lengte = '';
+            data.breedte = '';
+            data.hoogte = '';
+            data.opmerkingen = '';
+            
+            document.querySelectorAll('.result-text').forEach(div => {
+                div.textContent = 'Nog niet ingesproken';
+                div.classList.add('empty');
+            });
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Verstuur Metingen 📤';
+            
+            setTimeout(() => {
+                document.getElementById('status-message').style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
